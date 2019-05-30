@@ -1,0 +1,49 @@
+{
+  "expo": {
+    "name": "AAA",
+    "slug": "AAA2",
+    "privacy": "public",
+    "sdkVersion": "31.0.0",
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/logo1.png",
+    "splash": {
+      "image": "./assets/newSplash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.aaa.AAA",
+      "config": {
+        "googleSignIn": {
+          "reservedClientId": "com.googleusercontent.apps.825054366160-mh53l453hk7dfn1b1klk30fg0qvv6oj7"
+        }
+      }
+    },
+    "android": {
+      "package": "com.aaa.AAA",
+      "config": {
+        "googleSignIn": {
+          "apiKey": "AIzaSyA6D8QTfwnpGHCXC7oh6gwy-GLwhS0Tr10",
+          "certificateHash": "E1B7E6E1A72481F77558F91EF2D49E31C362F535"
+        }
+      },
+      "permissions": [
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "description": ""
+  }
+}

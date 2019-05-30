@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "825054366160",
+    "firebase_url": "https://aaa-academy-233404.firebaseio.com",
+    "project_id": "aaa-academy-233404",
+    "storage_bucket": "aaa-academy-233404.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:825054366160:android:dc8a947467a2cb89",
+        "android_client_info": {
+          "package_name": "com.aaa.AAA"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "825054366160-4njifgud17m2jg9acdpbt6tkobmmhsld.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABIKGar2GL0guMZDeqRnI-Wl-a4CoUSLQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
