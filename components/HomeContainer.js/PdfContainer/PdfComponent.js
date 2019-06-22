@@ -3,7 +3,7 @@
 
 
 import React from 'react'
-import { Image , TouchableOpacity , AsyncStorage , NetInfo , Dimensions} from 'react-native';
+import { Image , TouchableOpacity , AsyncStorage , NetInfo , Dimensions , Platform} from 'react-native';
 import {  Card, Container, Spinner , CardItem, Thumbnail, Text, Left , Body , Button , Icon, Content  , List, ListItem,   Right} from 'native-base'
 import { baseurl , endurl } from '../../../baseurl'
 import { ThemeContext } from '../../../GlobalContext'
@@ -86,9 +86,16 @@ export default class PdfComponent extends React.Component {
     handleDownload = async () => {
         const { status } = await Permissions.getAsync(Permissions.CAMERA_ROLL);
         if(status === 'granted'){
+            let fileUri = ''
             this.setState({ pdf_downloading : true })
             let uri = `${baseurl}uploads/pdfs/${this.state.object.filename}`
-            let fileUri = "file:///storage/emulated/0/Download/" + `AAA ${this.state.object.english_name}.pdf`
+            fileUri = FileSystem.documentDirectory + `AAA ${this.state.object.english_name}.pdf`
+            if(Platform.OS === 'android'){
+                fileUri = "file:///storage/emulated/0/Download/" + `AAA ${this.state.object.english_name}.pdf`
+            }else if(Platform.OS === 'ios'){
+                fileUri = FileSystem.documentDirectory + `AAA ${this.state.object.english_name}.pdf`
+            }
+            
             download = FileSystem.createDownloadResumable(uri, fileUri, {}, (downloaded) => {
                 this.setState({ total_data_to_loaded : downloaded.totalBytesExpectedToWrite, data_loaded : downloaded.totalBytesWritten })
                 console.log(parseInt((this.state.data_loaded/this.state.total_data_to_loaded)) * 100)

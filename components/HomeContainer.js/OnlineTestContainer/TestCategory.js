@@ -13,14 +13,12 @@ import {
   Platform,
   StatusBar,
   TouchableOpacity,
-  Image,
-  TextInput,
   AsyncStorage,
   RefreshControl,
-  Modal
+  Modal,
+  DeviceEventEmitter
 } from 'react-native';
 import {
-  Badge,
   Container,
   Thumbnail,
   Header,
@@ -65,10 +63,18 @@ export default class TestCategory extends React.Component {
   }
 
   handleCategoryClick = async test => {
-    await this.setState({
-      authorization_phase_starts: true,
-      selected_test: test
-    });
+    if (test.set_password === 'true') {
+      await this.setState({
+        authorization_phase_starts: true,
+        selected_test: test
+      });
+    } else {
+      await this.setState({ selected_test: test });
+      this.props.navigation.navigate('TestSwiper', {
+        test: this.state.selected_test,
+        refresh_list: this.refresh_list
+      });
+    }
   };
 
   refresh_list = () => {
@@ -85,6 +91,16 @@ export default class TestCategory extends React.Component {
         alert('Technical Error. Please Try Again');
       });
   };
+
+  componentWillMount() {
+    DeviceEventEmitter.addListener('IOS_BACK_EVENT_LISTENER', e => {
+      this.refresh_list();
+    });
+  }
+
+  componentWillUnMount() {
+    DeviceEventEmitter.removeListener('IOS_BACK_EVENT_LISTENER');
+  }
 
   componentDidMount = async () => {
     let student_id = JSON.parse(await AsyncStorage.getItem('student'))._id;

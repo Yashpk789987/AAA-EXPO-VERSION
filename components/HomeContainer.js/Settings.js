@@ -29,10 +29,10 @@ export default class Settings extends Component {
   };
 
   state = {
-    switch_value: false,
-    switching_language: false,
-    present_selected_language: '',
-    getting_language: true
+    switch_value: false
+    // switching_language: false,
+    // present_selected_language: '',
+    // getting_language: true
   };
 
   handleSwitch = () => {
@@ -40,27 +40,27 @@ export default class Settings extends Component {
     this.props.screenProps.toggleTheme();
   };
 
-  handleSwitchLanguage = async () => {
-    let current_language =
-      this.state.present_selected_language === 'english' ? 'hindi' : 'english';
-    this.setState({
-      switching_language: true,
-      present_selected_language: current_language
-    });
-    await AsyncStorage.setItem('language', current_language);
-    this.setState({
-      switching_language: false,
-      present_selected_language: current_language
-    });
-  };
+  // handleSwitchLanguage = async () => {
+  //   let current_language =
+  //     this.state.present_selected_language === 'english' ? 'hindi' : 'english';
+  //   this.setState({
+  //     switching_language: true,
+  //     present_selected_language: current_language
+  //   });
+  //   await AsyncStorage.setItem('language', current_language);
+  //   this.setState({
+  //     switching_language: false,
+  //     present_selected_language: current_language
+  //   });
+  // };
 
-  componentDidMount = async () => {
-    let language = await AsyncStorage.getItem('language');
-    this.setState({
-      getting_language: false,
-      present_selected_language: language
-    });
-  };
+  // componentDidMount = async () => {
+  //   let language = await AsyncStorage.getItem('language');
+  //   this.setState({
+  //     getting_language: false,
+  //     present_selected_language: language
+  //   });
+  // };
 
   render() {
     return (
@@ -124,7 +124,7 @@ export default class Settings extends Component {
                     />
                   </Right>
                 </ListItem>
-                <ListItem icon bordered>
+                {/* <ListItem icon bordered>
                   <Left>
                     <Button
                       style={{ backgroundColor: theme.header_background_color }}
@@ -151,7 +151,7 @@ export default class Settings extends Component {
                       onValueChange={() => this.handleSwitchLanguage()}
                     />
                   </Right>
-                </ListItem>
+                </ListItem> */}
               </Content>
             </Container>
           );

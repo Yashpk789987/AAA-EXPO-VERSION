@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Linking,
   Dimensions,
-  View,
   StyleSheet,
   Platform,
   StatusBar,
@@ -10,18 +9,15 @@ import {
   TouchableOpacity,
   ToastAndroid
 } from 'react-native';
+
 import {
-  Row,
-  Col,
   Container,
   Header,
   Left,
   Body,
   Right,
-  Title,
   Icon,
   Text,
-  Spinner,
   Card,
   CardItem,
   Button,
@@ -33,6 +29,7 @@ import { ThemeContext } from '../../GlobalContext';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 
 import Swiper from 'react-native-swiper';
+import SocialShare from '../SocialShare';
 
 class MainComponent extends React.Component {
   _menu = null;
@@ -59,11 +56,17 @@ class MainComponent extends React.Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      share_dialog_visible: false
+    };
   }
+
+  fbShare = async () => {
+    this.setState({ share_dialog_visible: true });
+  };
 
   componentDidMount() {}
   render() {
-    const navigation = this.props.navigation;
     return (
       <ThemeContext.Consumer>
         {theme => {
@@ -163,6 +166,91 @@ class MainComponent extends React.Component {
                           resizeMode: 'contain',
                           aspectRatio: 1.5
                         }}
+                        source={require('../../assets/NADD6.jpg')}
+                      />
+                    </Container>
+                    <Container
+                      style={{
+                        margin: '2%',
+                        flex: 1,
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                      }}
+                    >
+                      <Image
+                        style={{
+                          flex: 1,
+                          resizeMode: 'contain',
+                          aspectRatio: 1.5
+                        }}
+                        source={require('../../assets/NADD9.jpg')}
+                      />
+                    </Container>
+                    <Container
+                      style={{
+                        margin: '2%',
+                        flex: 1,
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                      }}
+                    >
+                      <Image
+                        style={{
+                          flex: 1,
+                          resizeMode: 'contain',
+                          aspectRatio: 1.5
+                        }}
+                        source={require('../../assets/NADD5.jpg')}
+                      />
+                    </Container>
+                    <Container
+                      style={{
+                        margin: '2%',
+                        flex: 1,
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                      }}
+                    >
+                      <Image
+                        style={{
+                          flex: 1,
+                          resizeMode: 'contain',
+                          aspectRatio: 1.5
+                        }}
+                        source={require('../../assets/NADD7.jpg')}
+                      />
+                    </Container>
+                    <Container
+                      style={{
+                        margin: '2%',
+                        flex: 1,
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                      }}
+                    >
+                      <Image
+                        style={{
+                          flex: 1,
+                          resizeMode: 'contain',
+                          aspectRatio: 1.5
+                        }}
+                        source={require('../../assets/NADD8.jpg')}
+                      />
+                    </Container>
+                    <Container
+                      style={{
+                        margin: '2%',
+                        flex: 1,
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                      }}
+                    >
+                      <Image
+                        style={{
+                          flex: 1,
+                          resizeMode: 'contain',
+                          aspectRatio: 1.5
+                        }}
                         source={require('../../assets/add4.jpeg')}
                       />
                     </Container>
@@ -197,7 +285,7 @@ class MainComponent extends React.Component {
                           resizeMode: 'contain',
                           aspectRatio: 1.5
                         }}
-                        source={require('../../assets/add2.png')}
+                        source={require('../../assets/NADD1.jpg')}
                       />
                     </Container>
                     <Container
@@ -214,12 +302,12 @@ class MainComponent extends React.Component {
                           resizeMode: 'contain',
                           aspectRatio: 1.5
                         }}
-                        source={require('../../assets/add10.png')}
+                        source={require('../../assets/NADD2.jpg')}
                       />
                     </Container>
                   </Swiper>
                 </Container>
-                <Card style={{ height: Dimensions.get('window').height * 0.5 }}>
+                <Card style={{ height: Dimensions.get('window').height * 0.7 }}>
                   <CardItem>
                     <Left>
                       <Thumbnail
@@ -251,7 +339,25 @@ class MainComponent extends React.Component {
                       </ListItem>
                       <ListItem icon style={{ padding: '5%' }}>
                         <Left style={{ paddingLeft: '5%' }}>
-                          <Button style={{ backgroundColor: 'red' }}>
+                          <Button
+                            style={{ backgroundColor: 'blue' }}
+                            onPress={() => Linking.openURL('sms:7000072790')}
+                          >
+                            <Icon name='mail' />
+                          </Button>
+                        </Left>
+                        <Right>
+                          <Text>{'7000072790'}</Text>
+                        </Right>
+                      </ListItem>
+                      <ListItem icon style={{ padding: '5%' }}>
+                        <Left style={{ paddingLeft: '5%' }}>
+                          <Button
+                            style={{ backgroundColor: 'red' }}
+                            onPress={() =>
+                              Linking.openURL('mailto: shshagrawal05@gmail.com')
+                            }
+                          >
                             <Icon name='mail' />
                           </Button>
                         </Left>
@@ -265,8 +371,13 @@ class MainComponent extends React.Component {
                         itemDivider={false}
                       >
                         <Left style={{ paddingLeft: '5%' }}>
-                          <Button style={{ backgroundColor: 'blue' }}>
-                            <Icon name='information-circle' />
+                          <Button
+                            style={{ backgroundColor: 'blue' }}
+                            onPress={() =>
+                              Linking.openURL('geo:26.214471, 78.202699')
+                            }
+                          >
+                            <Icon name='md-navigate' />
                           </Button>
                         </Left>
                         <Right style={{ paddingTop: '4%' }}>
@@ -279,14 +390,53 @@ class MainComponent extends React.Component {
                       </ListItem>
                     </Body>
                   </CardItem>
+                  <CardItem style={{ marginTop: '15%' }}>
+                    <SocialShare />
+                  </CardItem>
                 </Card>
-                {/* <Container style = {{ backgroundColor : theme.background , height : (Dimensions.get('window').height * 0.44)}} >
-                  <Swiper autoplay = {true} activeDotColor = 'white' >
-                    <Container style = {{ margin : '2%' , flex : 1 , justifyContent : 'center' , alignItems : 'center'}}>
-                      <Image style = {{ flex : 1 , resizeMode : 'contain' , aspectRatio : 1.5 }} source = {require('../../assets/more1.jpeg')} />
-                    </Container> 
+                <Container
+                  style={{
+                    backgroundColor: theme.background,
+                    height: Dimensions.get('window').height * 0.44
+                  }}
+                >
+                  <Swiper autoplay={true} activeDotColor='white'>
+                    <Container
+                      style={{
+                        margin: '2%',
+                        flex: 1,
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                      }}
+                    >
+                      <Image
+                        style={{
+                          flex: 1,
+                          resizeMode: 'contain',
+                          aspectRatio: 1.5
+                        }}
+                        source={require('../../assets/NADD3.jpg')}
+                      />
+                    </Container>
+                    <Container
+                      style={{
+                        margin: '2%',
+                        flex: 1,
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                      }}
+                    >
+                      <Image
+                        style={{
+                          flex: 1,
+                          resizeMode: 'contain',
+                          aspectRatio: 1.5
+                        }}
+                        source={require('../../assets/NADD10.jpg')}
+                      />
+                    </Container>
                   </Swiper>
-              </Container> */}
+                </Container>
                 <Container
                   style={{
                     backgroundColor: theme.background,

@@ -24,22 +24,9 @@ export default class App extends React.Component {
 
   render() {
     return (
-      <Container>
-        <Header>
-          <Body>
-            <Text>Share</Text>
-          </Body>
-        </Header>
-        <WebView
-          source={{
-            uri:
-              'https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fsharing%2Freference%2Fshare-dialog%2F&display=popup&ref=plugin&src=like&kid_directed_site=0&app_id=113869198637480'
-          }}
-        />
-      </Container>
-      // <ThemeContext.Provider value={this.state.theme}>
-      //   <MainComponent toggleTheme={this.toggleTheme} />
-      // </ThemeContext.Provider>
+      <ThemeContext.Provider value={this.state.theme}>
+        <MainComponent toggleTheme={this.toggleTheme} />
+      </ThemeContext.Provider>
     );
   }
 }

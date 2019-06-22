@@ -1,5 +1,5 @@
 import React from 'react'
-import { FlatList, View , StyleSheet , Platform , StatusBar , TouchableOpacity , ScrollView , Image , Modal , TouchableHighlight} from 'react-native'
+import { FlatList, View , StyleSheet ,Dimensions, Platform , StatusBar , TouchableOpacity , ScrollView , Image , Modal , TouchableHighlight} from 'react-native'
 
 import { ListItem , Badge, Row , Card , CardItem , Body , Left , Right ,Container, Header, Content, Text, Spinner , Icon , Button , Grid , Col , Input,Item } from 'native-base'
 import { ThemeContext } from '../../../GlobalContext.js'
@@ -93,18 +93,19 @@ class Question extends React.Component {
                         <ScrollView  style = {{ padding : '5%', backgroundColor : theme.background , borderColor : theme.outline_color , borderWidth : 1, borderRadius : 5 }}>
                             <View>
                                 <Text style = {{ color : theme.text_color , fontSize : 20}}>
-                                    Q {this.props.index + 1} . {entities.decode(question.english_text)} {`\n`}
+                                    Q {this.props.index + 1} . {entities.decode(question.english_text)}{`\n`}{`\n`}{entities.decode(question.hindi_text)}
                                 </Text>
                             </View>    
                             { question.pic === null ? <></> : 
-                           <Image
-                           style={{
-                             flex: 1,
-                             resizeMode: 'contain',
-                             aspectRatio: 4.5
-                           }}
-                           source={{ uri : file_base_url + '/questions/' + question.pic }}
-                         />
+                            <Image
+                                    style={{
+                                        height: Dimensions.get('window').height * 0.2,
+                                        width :null,
+                                        flex: 1,
+                                        resizeMode: 'contain',
+                                    }}
+                                    source={{ uri : file_base_url + '/questions/' + question.pic }}
+                                />
                             }
                             <View
                             style={{
@@ -354,7 +355,7 @@ export default class PracticeSheetComponent extends React.Component {
         return(
             <ThemeContext.Consumer>
                 {( theme ) => {return(
-                    <Container style = {{ backgroundColor : theme.background}}>
+                    <Container style = {{ backgroundColor : theme.background ,   flex:1, flexDirection: 'column' ,justifyContent: 'space-between' }}>
                         <Header style={[styles.androidHeader , { backgroundColor: theme.header_background_color }]}>
                             <Left>
                                 <TouchableOpacity onPress = {() => this.props.navigation.goBack()} hitSlop = {{top: 20, bottom: 20, left: 30, right: 30}}> 

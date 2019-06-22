@@ -1,5 +1,5 @@
 import React from 'react'
-import { View , StyleSheet , Platform , StatusBar , TouchableOpacity , ScrollView , Image} from 'react-native'
+import { View , StyleSheet , Platform , Dimensions , StatusBar , TouchableOpacity , ScrollView , Image, AsyncStorage} from 'react-native'
 
 import { Grid , Row , Col, Card , CardItem , Body , Left , Right ,Container, Header, Content, Text, Spinner , Icon , Button , Thumbnail } from 'native-base'
 
@@ -26,7 +26,7 @@ class TestResult extends React.Component {
         }
     }
     componentDidMount(){
-        //this.setState({ postingResult : true})
+       
         let array = this.props.test_question_array
         let incorrect = array.filter((item) => {
             return (parseInt(item.attempted_index) !== 0 && parseInt(item.attempted_index) !== parseInt(item.correct_option_index))
@@ -108,19 +108,23 @@ class TestResult extends React.Component {
                                    </Row>
                                    <Row>
                                        <Col><Text style = {{color : theme.text_color}}>Correct : </Text></Col>
-                                       <Col><Text style = {{color : theme.text_color}}>{this.state.correct.length + ` (${parseFloat((this.state.correct.length/this.state.total) * 100).toFixed(2)  } %)`}</Text></Col>
+                                       <Col><Text style = {{color : theme.text_color}}>{this.state.correct.length}</Text></Col>
                                    </Row>
                                    <Row>
                                        <Col><Text style = {{color : theme.text_color}}>Incorrect : </Text></Col>
-                                       <Col><Text style = {{color : theme.text_color}}>{this.state.incorrect.length + ` (${parseFloat((this.state.incorrect.length/this.state.total) * 100).toFixed(2)  } %)`}</Text></Col>
+                                       <Col><Text style = {{color : theme.text_color}}>{this.state.incorrect.length}</Text></Col>
                                    </Row>
                                    <Row>
                                        <Col><Text style = {{color : theme.text_color}}>Not Attempted : </Text></Col>
-                                       <Col><Text style = {{color : theme.text_color}}>{this.state.unattempt.length + ` (${parseFloat((this.state.unattempt.length/this.state.total) * 100).toFixed(2)  } %)`}</Text></Col>
+                                       <Col><Text style = {{color : theme.text_color}}>{this.state.unattempt.length}</Text></Col>
+                                   </Row>
+                                   <Row>
+                                       <Col><Text style = {{color : theme.text_color}}>Total Marks : </Text></Col>
+                                       <Col><Text style = {{color : theme.text_color}}>{this.state.correct.length - (this.state.incorrect.length/4)}</Text></Col>
                                    </Row>
                                    <Row>
                                        <Col><Text style = {{color : theme.text_color}}>Result : </Text></Col>
-                                       <Col><Text style = {{color : theme.text_color}}>{parseFloat((this.state.correct.length/this.state.total) * 100).toFixed(2) + ` %`}</Text></Col>
+                                       <Col><Text style = {{color : theme.text_color}}>{parseFloat(((this.state.correct.length - (this.state.incorrect.length/4))/this.state.total) * 100).toFixed(2) + ` %`}</Text></Col>
                                    </Row>
                                 </Container>
                             </Col>
@@ -209,6 +213,14 @@ class Question extends React.Component {
         this.setState({ color_object : newObject , clicked : true})
     } 
 
+    clear_question = () => {
+        let newObject = Object.assign(this.state.color_object , {
+            correct_dynamic_color : '',
+            correct_dynamic_color_2 : '',
+        })
+        this.setState({ color_object : newObject , clicked : false})
+    }
+
     handleSwip = (direction, state) => {
         let newObject = Object.assign(this.state.color_object , {
             correct_dynamic_color : '',
@@ -241,11 +253,12 @@ class Question extends React.Component {
                         </View>  
                         { test_question.pic === null ? <></> : 
                             <Image
-                            style={{
-                              flex: 1,
-                              resizeMode: 'contain',
-                              aspectRatio: 4.5
-                            }}
+                                style={{
+                                    height: Dimensions.get('window').height * 0.2,
+                                    width :null,
+                                    flex: 1,
+                                    resizeMode: 'contain',
+                                }}
                             source={{ uri : file_base_url + '/questions/' + test_question.pic }}
                           />
                         }
@@ -330,6 +343,7 @@ export default class TestSwiper extends React.Component {
     constructor(props){
         super(props);
         this.child = React.createRef();
+        this.child_question = React.createRef();
         this.state = {
             "test_questions": [],
             "test_questions_loading" : true,
@@ -351,13 +365,24 @@ export default class TestSwiper extends React.Component {
         this.setState({ test_question_array : test_question_array})
     }
 
-    
+    moveForward =  () => {
+        this.child_question.current.clear_question();
+        if(!(this.state.current_index === this.state.test_question_array.length)){
+           this.setState(state => ({ current_index : state.current_index + 1}))
+        }
+    }
+
+    moveBackward = () => {
+        this.child_question.current.clear_question();
+        if(!(this.state.current_index === 1)){
+            this.setState(state => ({ current_index : state.current_index - 1}))
+        }
+    }
 
     handleSwip = async (direction, state) => {
         if(direction === 'SWIPE_LEFT'){
             if(!(this.state.current_index === this.state.test_question_array.length)){
                 this.setState(state => ({ current_index : state.current_index + 1}))
-               
             }
         } else if(direction === 'SWIPE_RIGHT'){
             if(!(this.state.current_index === 1)){
@@ -371,7 +396,7 @@ export default class TestSwiper extends React.Component {
             return <></>
         } else {
             let height = parseInt(this.state.current_index) === parseInt(this.state.test_question_array.length ) ? '63%' : '72%'
-            return <Question language = {this.state.present_selected_language} height = {height} handleAttempt = {this.handleAttempt} handleSwip = {this.handleSwip} index = {current_index - 1} test_question = {this.state.test_question_array[current_index - 1]}  />
+            return <Question ref = {this.child_question} language = {this.state.present_selected_language} height = {height} handleAttempt = {this.handleAttempt} handleSwip = {this.handleSwip} index = {current_index - 1} test_question = {this.state.test_question_array[current_index - 1]}  />
         }
     }
 
@@ -496,7 +521,7 @@ export default class TestSwiper extends React.Component {
                         </TouchableOpacity>
                     </Left>
                     <Body style = {{ flex : 3, justifyContent : 'center' , alignItems : 'center'}} >
-                        <Text style = {{ color : 'white' , fontSize : 19 , paddingLeft : '26%'}}>Online Test</Text>
+                        <Text style = {{ color : 'white' , fontSize : 19 , paddingLeft : '26%'}}>Offline Test</Text>
                     </Body>
                     <Right>
                           
@@ -512,7 +537,7 @@ export default class TestSwiper extends React.Component {
                         <Button style = {{ width : '100%' , justifyContent: 'center' , alignItems : 'center' , backgroundColor : theme.name === "dark" ? "white" : "blue" }} onPress = {() => this.finishTest()} ><Text style = {{color : theme.name === "dark" ? "#000000" : "white"}} >Finish Test</Text></Button>
                     </Animatable.View> :
                      <></>}
-                <BottomToolBar toolbar_background_color = {theme.header_background_color} /> 
+                <BottomToolBar moveBackward = {this.moveBackward} moveForward = {this.moveForward} toolbar_background_color = {theme.header_background_color} /> 
             </Container>
             )}}    
             </ThemeContext.Consumer>

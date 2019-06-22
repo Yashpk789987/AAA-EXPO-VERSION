@@ -1,8 +1,8 @@
 import React from 'react'
-import { View , StyleSheet , Platform , StatusBar , TouchableOpacity , ScrollView , Image, AsyncStorage, BackHandler, Alert } from 'react-native'
+import { View , StyleSheet , Platform ,DeviveEventEmitter,Dimensions ,  StatusBar , TouchableOpacity , ScrollView , Image, AsyncStorage, BackHandler, Alert } from 'react-native'
 
 import { Grid , Row , Col, Card , CardItem , Body , Left , Right ,Container, Header, Content, Text, Spinner , Icon , Button , Thumbnail } from 'native-base'
-
+import { StackedBarChart, Grid as SVGGRID } from 'react-native-svg-charts'
 import { ThemeContext } from '../../../GlobalContext'
 import BottomToolBar from './BottomToolBar'
 import { baseurl, endurl, file_base_url } from '../../../baseurl';
@@ -13,6 +13,7 @@ const Entities = require('html-entities').XmlEntities;
 const entities = new Entities();
 
 import * as Animatable from 'react-native-animatable'
+
 
 class TestResult extends React.Component {
     constructor(props){
@@ -25,6 +26,9 @@ class TestResult extends React.Component {
             postingResult : false
         }
     }
+
+    
+
     componentDidMount = async () => {
         this.setState({ postingResult : true})
         let array = this.props.test_question_array
@@ -41,7 +45,11 @@ class TestResult extends React.Component {
         this.setState({ correct : correct , incorrect : incorrect , unattempt : unattempt , total : total})
         let data = {...this.props.test_info , 
                     student_id : JSON.parse(await AsyncStorage.getItem('student'))._id , 
-                    result : parseFloat((correct.length/total) * 100).toFixed(2)
+                    correct : correct.length,
+                    incorrect : incorrect.length,
+                    unattempt : unattempt.length,
+                    totalMarks : ((correct.length-(incorrect.length)/4)),
+                    result : parseFloat(((correct.length-(incorrect.length)/4)/total) * 100).toFixed(2)
                 }
         fetch(`${baseurl}tests/submit_test/${endurl}`,{
             method : 'POST',
@@ -62,6 +70,14 @@ class TestResult extends React.Component {
                   {(theme) => { return(
                       <Container style = {{ backgroundColor : theme.background}}>
                         <Header style={[styles.androidHeader  , { backgroundColor: theme.header_background_color }]}>
+                            <Left>
+                                <TouchableOpacity onPress = {() => 
+                                    {this.props.navigation.getParam('refresh_list')();
+                                    this.props.navigation.goBack();}
+                                    } hitSlop = {{top: 20, bottom: 20, left: 30, right: 30}}> 
+                                  <Icon name='arrow-back' style = {{ color : 'white' , paddingLeft : "20%"}}  />
+                                </TouchableOpacity>
+                            </Left>
                             <Body style = {{ flex : 3, justifyContent : 'center' , alignItems : 'center'}} >
                                 <Text style = {{ color : 'white' , fontSize : 19 }}>Test Results</Text>
                             </Body>
@@ -78,11 +94,17 @@ class TestResult extends React.Component {
             {(theme) => { return(
                 <Container style = {{ backgroundColor : theme.background}}>
                     <Header style={[styles.androidHeader  , { backgroundColor: theme.header_background_color }]}>
+                        <Left>
+                            <TouchableOpacity onPress = {() => {this.props.navigation.getParam('refresh_list')();
+                                    this.props.navigation.goBack();}} hitSlop = {{top: 20, bottom: 20, left: 30, right: 30}}> 
+                                <Icon name='arrow-back' style = {{ color : 'white' , paddingLeft : "20%"}}  />
+                            </TouchableOpacity>
+                        </Left>
                         <Body style = {{ flex : 3, justifyContent : 'center' , alignItems : 'center'}} >
                             <Text style = {{ color : 'white' , fontSize : 19 }}>Test Results</Text>
                         </Body>
                     </Header>
-
+                    
                         <Row style = {{ height : '45%' , paddingBottom : '0%'}}>
                             <Col><Container style = {{ backgroundColor : theme.background}} ><DemoChart test_question_array = {this.props.test_question_array} /></Container></Col>
                             <Col style = {{ paddingTop : '8%'}}>
@@ -123,23 +145,27 @@ class TestResult extends React.Component {
                                    </Row>
                                    <Row>
                                        <Col><Text style = {{color : theme.text_color}}>Correct : </Text></Col>
-                                       <Col><Text style = {{color : theme.text_color}}>{this.state.correct.length + ` (${parseFloat((this.state.correct.length/this.state.total) * 100).toFixed(2)  } %)`}</Text></Col>
+                                       <Col><Text style = {{color : theme.text_color}}>{this.state.correct.length}</Text></Col>
                                    </Row>
                                    <Row>
                                        <Col><Text style = {{color : theme.text_color}}>Incorrect : </Text></Col>
-                                       <Col><Text style = {{color : theme.text_color}}>{this.state.incorrect.length + ` (${parseFloat((this.state.incorrect.length/this.state.total) * 100).toFixed(2)  } %)`}</Text></Col>
+                                       <Col><Text style = {{color : theme.text_color}}>{this.state.incorrect.length}</Text></Col>
                                    </Row>
                                    <Row>
                                        <Col><Text style = {{color : theme.text_color}}>Not Attempted : </Text></Col>
-                                       <Col><Text style = {{color : theme.text_color}}>{this.state.unattempt.length + ` (${parseFloat((this.state.unattempt.length/this.state.total) * 100).toFixed(2)  } %)`}</Text></Col>
+                                       <Col><Text style = {{color : theme.text_color}}>{this.state.unattempt.length}</Text></Col>
+                                   </Row>
+                                   <Row>
+                                       <Col><Text style = {{color : theme.text_color}}>Total Marks : </Text></Col>
+                                       <Col><Text style = {{color : theme.text_color}}>{this.state.correct.length - (this.state.incorrect.length/4)}</Text></Col>
                                    </Row>
                                    <Row>
                                        <Col><Text style = {{color : theme.text_color}}>Result : </Text></Col>
-                                       <Col><Text style = {{color : theme.text_color}}>{parseFloat((this.state.correct.length/this.state.total) * 100).toFixed(2) + ` %`}</Text></Col>
+                                       <Col><Text style = {{color : theme.text_color}}>{parseFloat(((this.state.correct.length - (this.state.incorrect.length/4))/this.state.total) * 100).toFixed(2) + ` %`}</Text></Col>
                                    </Row>
                                 </Container>
                             </Col>
-                        </Row>
+                        </Row> 
                 </Container>
             )}}
         </ThemeContext.Consumer>  
@@ -159,9 +185,13 @@ class Timer extends React.Component{
         
     }
 
+    //////// SPECIAL FUNCTION ///////
+
     returnTimeTaken = () => {
         return this.state.seconds
     }
+
+    /////////// SPECIAL FUNCTION //////
 
     tick = () => {
         this.setState(state => ({
@@ -192,44 +222,24 @@ class Timer extends React.Component{
 
 class Question extends React.Component {
     state = {
-       color_object : {
-        correct_dynamic_color : '',
-        correct_dynamic_color_2 : '',
-       } , 
        clicked : false , 
-       test_options : []
+       test_options : [],
     }
-
-
-    componentDidMount() {}
-    
     componentDidUpdate(){}
 
     handleCorrect = (attempted_index) => {
         this.props.handleAttempt(this.props.index,attempted_index)
-        let newObject = Object.assign(this.state.color_object , {
-            correct_dynamic_color : 'green',
-            correct_dynamic_color_2 : 'green',
-        })
-        this.setState({ color_object : newObject , clicked : true})
+        this.setState({clicked : true})
     }
-
 
     handleInCorrect = (attempted_index) => {
         this.props.handleAttempt(this.props.index,attempted_index)
-        let newObject = Object.assign(this.state.color_object , {
-            correct_dynamic_color : 'green',
-            correct_dynamic_color_2 : 'green',
-        })
-        this.setState({ color_object : newObject , clicked : true})
+        this.setState({clicked : true})
     } 
 
     handleSwip = (direction, state) => {
-        let newObject = Object.assign(this.state.color_object , {
-            correct_dynamic_color : '',
-            correct_dynamic_color_2 : '',
-        })
-        this.setState({ color_object : newObject , clicked : false})
+        this.setState({ temp_time_taken : 0 })
+        this.setState({clicked : false})
         this.props.handleSwip(direction, state)
     }
 
@@ -257,11 +267,12 @@ class Question extends React.Component {
                         { test_question.pic === null ? <></> : 
                          
                          <Image
-                           style={{
-                             flex: 1,
-                             resizeMode: 'contain',
-                             aspectRatio: 4.5
-                           }}
+                            style={{
+                                height: Dimensions.get('window').height * 0.2,
+                                width :null,
+                                flex: 1,
+                                resizeMode: 'contain',
+                            }}
                            source={{ uri : file_base_url + '/questions/' + test_question.pic }}
                          />
                        
@@ -278,7 +289,7 @@ class Question extends React.Component {
                         <View style = {{ flex : 1 , paddingTop : '10%' , paddingBottom : '10%'}}>
                             {   test_question.test_options.map(( test_option , index ) => {return(
                                 <Option clicked = {this.state.clicked} index = {index} key = {test_option.option_id} 
-                                outline_color = {theme.outline_color} option = {test_option} 
+                                outline_color = {theme.outline_color} option = {test_option}  backgroundColor = {theme.background}
                                 test_question = {test_question} color_object = {this.state.color_object} 
                                 handleCorrect = {this.handleCorrect} handleInCorrect = {this.handleInCorrect}  />
                             )})}
@@ -287,7 +298,6 @@ class Question extends React.Component {
               </GestureRecognizer>
             )}}
         </ThemeContext.Consumer> 
-        // <Image source = {require ('../../../assets/pdf.jpg')} />
         )
     }
 }
@@ -295,45 +305,34 @@ class Question extends React.Component {
 class Option extends React.Component {
     constructor(props){
         super(props)
-        this.state = {
-            wrong_dynamic_color : '',
-            wrong_dynamic_color_2 : ''
-        }
+        this.state = {}
     }
     componentDidMount(){
-        this.setState({wrong_dynamic_color : this.props.outline_color })
+        
     }
 
     render(){
-        const { outline_color , option , test_question , index} = this.props;
+        const { outline_color , backgroundColor , option , test_question , index} = this.props;
         if(this.props.test_question.is_attempted !== true){
-            return(
-                <Button large disabled = {this.props.clicked} bordered block style = {[{ borderColor : (index === parseInt(test_question.correct_option_index) - 1 ? (this.props.color_object.correct_dynamic_color === '' ? this.props.outline_color : this.props.color_object.correct_dynamic_color) : this.state.wrong_dynamic_color) ,
-                    backgroundColor : (index === parseInt(test_question.correct_option_index) - 1 ? this.props.color_object.correct_dynamic_color_2 : this.state.wrong_dynamic_color_2 )}]} 
+            
+           return(
+                <Button large disabled = {false} bordered block style = {{ borderColor : outline_color , backgroundColor : backgroundColor}} 
                     onPress = {() => {if(index === (parseInt(test_question.correct_option_index) - 1)) {this.props.handleCorrect(parseInt(this.props.index) + 1)} 
-                else{this.setState({ wrong_dynamic_color : 'red' , wrong_dynamic_color_2 : 'red'}); this.props.handleInCorrect(parseInt(this.props.index) + 1)}}} >
+                else{this.props.handleInCorrect(parseInt(this.props.index) + 1)}}} >
                     <Text uppercase = {false} style = {{ color : outline_color }}> {index + 1 } . {entities.decode(option.option_english_text)} </Text>
                 </Button>
             )
         }else {
-            let borderColor = '' , backgroundColor = ''
-            if(index === parseInt(test_question.correct_option_index) - 1){
-                borderColor = 'green'
-                backgroundColor = 'green'
-            }else if(index === parseInt(test_question.attempted_index) - 1){
-                if(parseInt(test_question.attempted_index) === parseInt(test_question.correct_option_index)){
-                    borderColor = 'green'
-                    backgroundColor = 'green'
-                } else {
-                    borderColor = 'red'
-                    backgroundColor = 'red'
-                }
-            } else {
-                   borderColor = 'white'
+            if(index === (parseInt(test_question.attempted_index) - 1)){
+             return (
+                <Button large disabled = {true} bordered block style = {[{ borderColor : 'orange' ,
+                    backgroundColor : 'orange' }]}  >
+                   <Text uppercase = {false} style = {{ color : outline_color }}> {index + 1 } . {entities.decode(option.option_english_text)} </Text>
+                </Button>
+            )
             }
-             
             return(
-                <Button large disabled = {true} bordered block style = {[{ borderColor : borderColor ,
+                <Button large disabled = {true} bordered block style = {[{ borderColor : outline_color ,
                      backgroundColor : backgroundColor }]}  >
                     <Text uppercase = {false} style = {{ color : outline_color }}> {index + 1 } . {entities.decode(option.option_english_text)} </Text>
                 </Button>
@@ -349,6 +348,7 @@ export default class TestSwiper extends React.Component {
     constructor(props){
         super(props);
         this.child = React.createRef();
+        this.child_2 = React.createRef();
         this.state = {
             "test_questions": [],
             "test_questions_loading" : true,
@@ -370,6 +370,24 @@ export default class TestSwiper extends React.Component {
         this.setState({ test_question_array : test_question_array})
     }
 
+    undo_question = async () => {
+        let index = this.state.current_index - 1;
+        let test_question_array = JSON.parse(JSON.stringify(this.state.test_question_array))
+        test_question_array[index] = Object.assign(test_question_array[index] , { is_attempted : false , attempted_index : 0})
+        await this.setState({ test_question_array : test_question_array})
+    }
+    
+    moveForward = () => {
+        if(!(this.state.current_index === this.state.test_question_array.length)){
+            this.setState(state => ({ current_index : state.current_index + 1}))
+        }
+    }
+
+    moveBackward = () => {
+        if(!(this.state.current_index === 1)){
+            this.setState(state => ({ current_index : state.current_index - 1}))
+        }
+    }
     
 
     handleSwip = async (direction, state) => {
@@ -390,7 +408,7 @@ export default class TestSwiper extends React.Component {
             return <></>
         } else {
             let height = parseInt(this.state.current_index) === parseInt(this.state.test_question_array.length ) ? '65%' : '73%'
-            return <Question language = {this.state.present_selected_language} height = {height} handleAttempt = {this.handleAttempt} handleSwip = {this.handleSwip} index = {current_index - 1} test_question = {this.state.test_question_array[current_index - 1]}  />
+            return <Question ref = {this.child_2} language = {this.state.present_selected_language} height = {height} handleAttempt = {this.handleAttempt} handleSwip = {this.handleSwip} index = {current_index - 1} test_question = {this.state.test_question_array[current_index - 1]}  />
         }
     }
 
@@ -435,11 +453,16 @@ export default class TestSwiper extends React.Component {
                         test_question.pic = test_questions[i].pic
                         test_question.is_attempted = false
                         test_question.attempted_index = 0
+                        //test_question.total_question_time_taken_in_seconds = 0
                         test_question.test_options.push({ option_id : test_questions[i].option_id , option_english_text : test_questions[i].option_english_text , option_hindi_text : test_questions[i].option_hindi_text })
                     } else {
                         test_question.test_options.push({ option_id : test_questions[i].option_id , option_english_text : test_questions[i].option_english_text , option_hindi_text : test_questions[i].option_hindi_text })
                     }
                 }
+                if(test.shuffle_required === 'true'){
+                    test_question_array.sort(function(a, b){return 0.5 - Math.random()});
+                }
+                
                 this.setState({ test_question_array : test_question_array , test_questions_loading : false})
                ///////////////// For Formatiing Data /////////////////////////////
 
@@ -484,6 +507,9 @@ export default class TestSwiper extends React.Component {
             alert("Test Finished")
             await this.setState({ test_finished : true , time_taken : this.child.current.returnTimeTaken()})
         }
+
+        // alert("Test Finished")
+        // await this.setState({ test_finished : true , time_taken : this.child.current.returnTimeTaken()})
         
     }
 
@@ -494,7 +520,7 @@ export default class TestSwiper extends React.Component {
                 test_id : test._id,
                 time_taken : this.state.time_taken
             }
-            return <TestResult test_info = {test_info} test_question_array = {this.state.test_question_array} />
+            return <TestResult navigation = {this.props.navigation} test_info = {test_info} test_question_array = {this.state.test_question_array} />
         }
         if(this.state.time_allowed === this.state.seconds){
             this.finishTest()
@@ -545,14 +571,13 @@ export default class TestSwiper extends React.Component {
                     <Text style = {{ color : theme.text_color , justifyContent : 'flex-start'}}> Q.No {this.state.current_index} / {this.state.test_question_array.length} </Text>
                     <Timer finishTest = {this.finishTest} ref={this.child} timeTaken = {this.timeTaken} theme = {theme} time_allowed = {parseInt(test.test_allowed_time_in_seconds)} />
                 </View> 
-                {/* <Image source = {require ('../../../assets/pdf.jpg')} /> */}
                 {this.makeSwiper(this.state.current_index)}
                 {parseInt(this.state.current_index) === parseInt(this.state.test_question_array.length ) ?
                      <Animatable.View  animation = "zoomIn" iterationCount = {1} >
                         <Button style = {{ width : '100%' , justifyContent: 'center' , alignItems : 'center' , backgroundColor : theme.name === "dark" ? "white" : "blue" }} onPress = {() => this.finishTest()} ><Text style = {{color : theme.name === "dark" ? "#000000" : "white"}} >Finish Test</Text></Button>
                     </Animatable.View> :
                      <></>}
-                <BottomToolBar toolbar_background_color = {theme.header_background_color} /> 
+                <BottomToolBar undo_question = {this.undo_question} moveBackward = {this.moveBackward} moveForward = {this.moveForward} toolbar_background_color = {theme.header_background_color} /> 
             </Container>
             )}}    
             </ThemeContext.Consumer>

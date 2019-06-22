@@ -8,8 +8,9 @@ import {
   Modal,
   View
 } from 'react-native';
+
 import { Facebook, Google } from 'expo';
-import { Container, Button, Form, Input, Item, Label } from 'native-base';
+import { Button, Form, Input, Item, Label } from 'native-base';
 import { baseurl, endurl } from '../baseurl';
 import { DotIndicator } from 'react-native-indicators';
 const APP_ID = `2101839143230469`;
@@ -28,7 +29,8 @@ export default class Login extends React.Component {
       google_pic_uri: '',
       google_id: '',
       login_type: '',
-      loading: false
+      loading: false,
+      share_dialog_visible: false
     };
   }
 
@@ -127,6 +129,10 @@ export default class Login extends React.Component {
           '770693742657-cfca0ckapu7rrm5o21te7hutkpdb2uaa.apps.googleusercontent.com',
         androidStandaloneAppClientId:
           '825054366160-uob259bt5tsbrkeklhu1m5la2qpbggff.apps.googleusercontent.com',
+        iosClientId:
+          '825054366160-er9uon4av5hoi9i1ie1478o5046di4d6.apps.googleusercontent.com',
+        iosStandaloneAppClientId:
+          '825054366160-sl5gjqsgd4lvcjee9rhcgpk0ti11g2er.apps.googleusercontent.com',
         scopes: ['profile', 'email']
       });
       if (result.type === 'success') {

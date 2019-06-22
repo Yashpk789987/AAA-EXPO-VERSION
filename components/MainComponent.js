@@ -24,10 +24,10 @@ class MainComponent extends React.Component {
 
   componentDidMount = async () => {
     let student = await AsyncStorage.getItem('student');
-    let language = await AsyncStorage.getItem('language');
-    if (language === null) {
-      await AsyncStorage.setItem('language', 'english');
-    }
+    // let language = await AsyncStorage.getItem('language');
+    // if (language === null) {
+    //   await AsyncStorage.setItem('language', 'english');
+    // }
     if (student !== null) {
       this.setState({ loggedIn: true });
     }

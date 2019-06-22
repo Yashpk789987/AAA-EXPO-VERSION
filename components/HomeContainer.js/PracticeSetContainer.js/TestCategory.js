@@ -1,4 +1,11 @@
 import React from 'react';
+import Dialog, {
+  DialogFooter,
+  DialogButton,
+  DialogContent,
+  DialogTitle,
+  SlideAnimation
+} from 'react-native-popup-dialog';
 import {
   View,
   Text,
@@ -6,6 +13,7 @@ import {
   Platform,
   StatusBar,
   TouchableOpacity,
+  Modal,
   Image,
   RefreshControl
 } from 'react-native';
@@ -23,12 +31,16 @@ import {
   CardItem,
   Spinner,
   Content,
-  ListItem
+  ListItem,
+  Form,
+  Input,
+  Item,
+  Label
 } from 'native-base';
 
 import { GlobalContext, ThemeContext } from '../../../GlobalContext';
 import { baseurl, endurl } from '../../../baseurl';
-import { PulseIndicator } from 'react-native-indicators';
+import { PulseIndicator, DotIndicator } from 'react-native-indicators';
 
 export default class TestCategory extends React.Component {
   static navigationOptions = {
@@ -38,12 +50,31 @@ export default class TestCategory extends React.Component {
     super(props);
     this.state = {
       online_tests: [],
-      online_tests_loading: true
+      online_tests_loading: true,
+      authorization_phase_starts: false,
+      authorization_phase_ends: false,
+      authorizing: false,
+      test_code: '',
+      password: '',
+      selected_test: null,
+      message: '',
+      student_id: null
     };
   }
 
-  handleCategoryClick = test => {
-    this.props.navigation.navigate('TestSwiper', { test: test });
+  handleCategoryClick = async test => {
+    if (test.set_password === 'true') {
+      await this.setState({
+        authorization_phase_starts: true,
+        selected_test: test
+      });
+    } else {
+      await this.setState({ selected_test: test });
+      this.props.navigation.navigate('TestSwiper', {
+        test: this.state.selected_test,
+        refresh_list: this.refresh_list
+      });
+    }
   };
 
   refresh_list = () => {
@@ -104,6 +135,41 @@ export default class TestCategory extends React.Component {
     });
   };
 
+  handle_verify = () => {
+    if (this.state.test_code === '' || this.state.password === '') {
+      this.setState({ message: 'Please Fill Up All Fields' });
+    } else {
+      this.setState({ message: '', authorizing: true });
+      fetch(`${baseurl}authorize/authorize/${endurl}`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(this.state)
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.authenticated) {
+            this.setState({
+              authorization_phase_starts: false,
+              authorizing: false
+            });
+            this.props.navigation.navigate('TestSwiper', {
+              test: this.state.selected_test,
+              refresh_list: this.refresh_list
+            });
+          } else {
+            this.setState({
+              message: 'Wrong Code/Password',
+              authorizing: false
+            });
+          }
+        })
+        .catch(err => console.log(err));
+    }
+  };
+
   componentDidUpdate() {}
 
   render() {
@@ -112,6 +178,65 @@ export default class TestCategory extends React.Component {
         {theme => {
           return (
             <Container style={{ backgroundColor: theme.background }}>
+              <Modal
+                animationType='fade'
+                transparent={true}
+                visible={this.state.authorizing}
+                onRequestClose={() => alert('Closed')}
+              >
+                <View style={{ paddingTop: '20%' }}>
+                  <DotIndicator color='white' />
+                </View>
+              </Modal>
+              <Dialog
+                width={1}
+                height={0.6}
+                visible={this.state.authorization_phase_starts}
+                dialogTitle={<DialogTitle title='Verfication' />}
+                footer={
+                  <DialogFooter>
+                    <DialogButton
+                      text='CANCEL'
+                      onPress={() => {
+                        this.setState({ authorization_phase_starts: false });
+                      }}
+                    />
+                    <DialogButton
+                      text='VERIFY'
+                      onPress={() => this.handle_verify()}
+                    />
+                  </DialogFooter>
+                }
+                dialogAnimation={
+                  new SlideAnimation({
+                    slideFrom: 'bottom'
+                  })
+                }
+              >
+                <DialogContent style={{ paddingTop: '4%', height: '60%' }}>
+                  <Form>
+                    <Item stackedLabel>
+                      <Label>Test Code</Label>
+                      <Input
+                        onChangeText={text =>
+                          this.setState({ test_code: text })
+                        }
+                      />
+                    </Item>
+                    <Item stackedLabel>
+                      <Label>Password</Label>
+                      <Input
+                        secureTextEntry={true}
+                        onChangeText={text => this.setState({ password: text })}
+                      />
+                    </Item>
+                  </Form>
+                  <Text style={{ color: 'red', paddingLeft: '5%' }}>
+                    {`\n`}
+                    {this.state.message}
+                  </Text>
+                </DialogContent>
+              </Dialog>
               <Header
                 style={[
                   styles.androidHeader,
@@ -145,7 +270,7 @@ export default class TestCategory extends React.Component {
                   <Text
                     style={{ color: 'white', fontSize: 19, paddingLeft: '26%' }}
                   >
-                    OFFline Tests
+                    Offline Tests
                   </Text>
                 </Body>
                 <Right />

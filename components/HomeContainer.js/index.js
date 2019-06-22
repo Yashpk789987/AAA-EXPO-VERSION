@@ -37,10 +37,14 @@ class CustomDrawer___L extends React.Component {
     };
   }
   componentDidMount = async () => {
-    const { status } = await Permissions.getAsync(Permissions.CAMERA_ROLL);
+    const { status } = await Permissions.getAsync(
+      Permissions.CAMERA_ROLL,
+      Permissions.NOTIFICATIONS
+    );
     if (status === 'denied') {
       const { status, permissions } = await Permissions.askAsync(
-        Permissions.CAMERA_ROLL
+        Permissions.CAMERA_ROLL,
+        Permissions.NOTIFICATIONS
       );
     }
     let student = JSON.parse(await AsyncStorage.getItem('student'));

@@ -1,26 +1,21 @@
-import React from 'react'
-import { View , Text } from 'react-native'
-
+import React from 'react';
+import { View, Text } from 'react-native';
 
 export default class ___ extends React.Component {
-    constructor(props){
-        super(props);
-        this.state = {}
-    }
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
 
-    componentDidMount() {
+  componentDidMount() {}
 
-    }
+  componentDidUpdate() {}
 
-    componentDidUpdate() {
-
-    }
-
-    render() {
-        return(
-            <View>
-                <Text>Sample Component</Text>
-            </View>
-        )
-    }
+  render() {
+    return (
+      <View>
+        <Text>Sample Component</Text>
+      </View>
+    );
+  }
 }
