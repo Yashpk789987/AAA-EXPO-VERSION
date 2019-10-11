@@ -62,6 +62,10 @@ export default class TestCategory extends React.Component {
     };
   }
 
+  moveToPaymentGateWay = () => {
+    this.props.navigation.navigate('PaymentGateWayComponent');
+  };
+
   handleCategoryClick = async test => {
     if (test.set_password === 'true') {
       await this.setState({
@@ -294,12 +298,25 @@ export default class TestCategory extends React.Component {
                   }}
                 >
                   <Text
-                    style={{ color: 'white', fontSize: 19, paddingLeft: '26%' }}
+                    style={{ color: 'white', fontSize: 19, paddingLeft: '20%' }}
                   >
                     Online Tests
                   </Text>
                 </Body>
-                <Right />
+                <Right>
+                  <TouchableOpacity onPress={this.moveToPaymentGateWay}>
+                    <Text
+                      style={{
+                        color: 'white',
+                        fontSize: 19,
+                        paddingRight: '10%',
+                        fontStyle: 'italic'
+                      }}
+                    >
+                      Pay
+                    </Text>
+                  </TouchableOpacity>
+                </Right>
               </Header>
               <Content
                 style={{ padding: '3%' }}

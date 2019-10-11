@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   Text,
-  Image,
   StyleSheet,
   ImageBackground,
   AsyncStorage,
@@ -73,15 +72,12 @@ export default class Login extends React.Component {
 
   fbLogIn = async () => {
     try {
-      const {
-        type,
-        token,
-        expires,
-        permissions,
-        declinedPermissions
-      } = await Facebook.logInWithReadPermissionsAsync(APP_ID, {
-        permissions: ['public_profile']
-      });
+      const { type, token } = await Facebook.logInWithReadPermissionsAsync(
+        APP_ID,
+        {
+          permissions: ['public_profile']
+        }
+      );
       if (type === 'success') {
         const response = await fetch(
           `https://graph.facebook.com/me?fields=id,name,picture.width(200).height(150)&access_token=${token}`

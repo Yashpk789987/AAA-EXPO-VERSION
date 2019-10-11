@@ -1,7 +1,7 @@
 import React from 'react'
 import { ScrollView , Text , StyleSheet , Platform , StatusBar , TouchableOpacity , Image } from 'react-native'
-import { Segment,  Container , Header , Left, Right, Body, Icon , Button , Card , CardItem , Spinner, Content , Grid , Col, Row} from 'native-base'
-import {  categories } from '../../../demo_data'
+import { Container , Header , Left, Right, Body, Icon , Button , Card , CardItem , Spinner, Content , Grid , Col, Row} from 'native-base'
+
 import { GlobalContext , ThemeContext } from '../../../GlobalContext'
 import { createMaterialTopTabNavigator , createAppContainer } from 'react-navigation'
 import { baseurl , endurl , file_base_url} from '../../../baseurl'
@@ -42,7 +42,7 @@ class AptitudeCategoryPicker extends React.Component {
                         <Card style={{flex: 0 }}>
                             <CardItem>
                                 <Body style = {{ flex : 3, justifyContent : 'center', alignItems : 'center'}}>
-                                    <Text style = {{ fontSize : 15 }} adjustsFontSizeToFit = {true} numberOfLines = {1}>{categories[i].english_name}</Text>
+                                    <Text style = {{ fontSize : 15 }} adjustsFontSizeToFit = {true} numberOfLines = {2}>{categories[i].english_name}</Text>
                                 </Body>
                             </CardItem>
                             <CardItem cardBody>
@@ -57,7 +57,7 @@ class AptitudeCategoryPicker extends React.Component {
                         <Card style={{flex: 0 }}>
                             <CardItem>
                                 <Body style = {{ flex : 3, justifyContent : 'center', alignItems : 'center'}}>
-                                    <Text style = {{ fontSize : 15 }} adjustsFontSizeToFit = {true} numberOfLines = {1}>{categories[i+1].english_name}</Text>
+                                    <Text style = {{ fontSize : 15 }} adjustsFontSizeToFit = {true} numberOfLines = {2}>{categories[i+1].english_name}</Text>
                                 </Body>
                             </CardItem>
                             <CardItem cardBody>
@@ -136,7 +136,7 @@ class ReasoningCategoryPicker extends React.Component {
                         <Card style={{flex: 0 }}>
                             <CardItem>
                                 <Body style = {{ flex : 3, justifyContent : 'center', alignItems : 'center'}}>
-                                    <Text style = {{ fontSize : 15 }} adjustsFontSizeToFit = {true} numberOfLines = {1}>{categories[i].english_name}</Text>
+                                    <Text style = {{ fontSize : 15 }} adjustsFontSizeToFit = {true} numberOfLines = {2}>{categories[i].english_name}</Text>
                                 </Body>
                             </CardItem>
                             <CardItem cardBody>
@@ -151,7 +151,7 @@ class ReasoningCategoryPicker extends React.Component {
                         <Card style={{flex: 0 }}>
                             <CardItem>
                                 <Body style = {{ flex : 3, justifyContent : 'center', alignItems : 'center'}}>
-                                    <Text style = {{ fontSize : 15 }} adjustsFontSizeToFit = {true} numberOfLines = {1}>{categories[i+1].english_name}</Text>
+                                    <Text style = {{ fontSize : 15 }} adjustsFontSizeToFit = {true} numberOfLines = {2}>{categories[i+1].english_name}</Text>
                                 </Body>
                             </CardItem>
                             <CardItem cardBody>

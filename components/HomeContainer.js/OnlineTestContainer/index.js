@@ -2,6 +2,7 @@ import { createStackNavigator, createAppContainer } from 'react-navigation';
 import React from 'react';
 import TestCategory from './TestCategory';
 import TestSwiper from './TestSwiper';
+import PaymentGateWayComponent from '../PaymentGateWayContainer/index';
 
 import { GlobalContext } from '../../../GlobalContext';
 
@@ -12,6 +13,9 @@ const AppNavigator = createStackNavigator(
     },
     TestSwiper: {
       screen: TestSwiper
+    },
+    PaymentGateWayComponent: {
+      screen: PaymentGateWayComponent
     }
   },
   {

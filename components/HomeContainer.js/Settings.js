@@ -4,24 +4,22 @@ import {
   StyleSheet,
   StatusBar,
   Platform,
-  TouchableOpacity,
-  AsyncStorage
+  TouchableOpacity
 } from 'react-native';
 import {
   Container,
   Header,
   Content,
-  List,
   ListItem,
   Text,
   Icon,
   Left,
   Body,
   Right,
-  Button,
-  Separator
+  Button
 } from 'native-base';
-import { ThemeContext, LanguageContext } from '../../GlobalContext';
+
+import { ThemeContext } from '../../GlobalContext';
 
 export default class Settings extends Component {
   static navigationOptions = {
@@ -30,9 +28,6 @@ export default class Settings extends Component {
 
   state = {
     switch_value: false
-    // switching_language: false,
-    // present_selected_language: '',
-    // getting_language: true
   };
 
   handleSwitch = () => {
@@ -40,28 +35,7 @@ export default class Settings extends Component {
     this.props.screenProps.toggleTheme();
   };
 
-  // handleSwitchLanguage = async () => {
-  //   let current_language =
-  //     this.state.present_selected_language === 'english' ? 'hindi' : 'english';
-  //   this.setState({
-  //     switching_language: true,
-  //     present_selected_language: current_language
-  //   });
-  //   await AsyncStorage.setItem('language', current_language);
-  //   this.setState({
-  //     switching_language: false,
-  //     present_selected_language: current_language
-  //   });
-  // };
-
-  // componentDidMount = async () => {
-  //   let language = await AsyncStorage.getItem('language');
-  //   this.setState({
-  //     getting_language: false,
-  //     present_selected_language: language
-  //   });
-  // };
-
+  componentDidMount() {}
   render() {
     return (
       <ThemeContext.Consumer>
@@ -124,34 +98,6 @@ export default class Settings extends Component {
                     />
                   </Right>
                 </ListItem>
-                {/* <ListItem icon bordered>
-                  <Left>
-                    <Button
-                      style={{ backgroundColor: theme.header_background_color }}
-                    >
-                      <Icon active name={'md-book'} />
-                    </Button>
-                  </Left>
-                  <Body>
-                    <Text style={{ color: theme.text_color }}>
-                      {this.state.present_selected_language === 'english'
-                        ? 'Switch To Hindi Language'
-                        : 'Switch To English Language'}
-                    </Text>
-                  </Body>
-                  <Right>
-                    <Switch
-                      value={
-                        this.state.present_selected_language === 'english'
-                          ? true
-                          : false
-                      }
-                      trackColor={{ true: 'white', false: 'blue' }}
-                      thumbColor={theme.name === 'dark' ? 'white' : 'blue'}
-                      onValueChange={() => this.handleSwitchLanguage()}
-                    />
-                  </Right>
-                </ListItem> */}
               </Content>
             </Container>
           );

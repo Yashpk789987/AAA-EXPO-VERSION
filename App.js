@@ -1,9 +1,9 @@
 import React from 'react';
 
 import MainComponent from './components/MainComponent';
-import { AsyncStorage, WebView } from 'react-native';
+
 import { themes, ThemeContext } from './GlobalContext';
-import { Container, Header, Text, Body } from 'native-base';
+
 export default class App extends React.Component {
   constructor(props) {
     super(props);

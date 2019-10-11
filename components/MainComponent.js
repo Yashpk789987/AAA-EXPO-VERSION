@@ -1,9 +1,10 @@
 import React from 'react';
-import { AsyncStorage } from 'react-native';
-
+import { AsyncStorage, TouchableOpacity } from 'react-native';
+import { Badge, Text } from 'native-base';
 import Login from '../components/Login';
 
 import HomeContainer from './HomeContainer.js';
+import Wins from './Wins.js';
 
 class MainComponent extends React.Component {
   constructor(props) {
@@ -24,10 +25,6 @@ class MainComponent extends React.Component {
 
   componentDidMount = async () => {
     let student = await AsyncStorage.getItem('student');
-    // let language = await AsyncStorage.getItem('language');
-    // if (language === null) {
-    //   await AsyncStorage.setItem('language', 'english');
-    // }
     if (student !== null) {
       this.setState({ loggedIn: true });
     }
@@ -53,6 +50,23 @@ class MainComponent extends React.Component {
           makeLogout={this.makeLogout}
           toggleTheme={this.props.toggleTheme}
         />
+        // <Wins />
+        // <TouchableOpacity
+        //   style={{
+        //     paddingTop: '10%',
+        //     paddingLeft: '40%',
+        //     paddingBottom: '10%'
+        //   }}
+        //   onPress={() => {
+        //     this.props.Jump(data.index - 1);
+        //   }}
+        // >
+        //   <Badge primary>
+        //     <Text style={{ color: 'white', paddingTop: 1, width: null }}>
+        //       {100}
+        //     </Text>
+        //   </Badge>
+        // </TouchableOpacity>
       );
     } else {
       return <Login makeLogin={this.makeLogin} />;

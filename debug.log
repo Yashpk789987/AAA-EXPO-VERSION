@@ -29,3 +29,4 @@
 [0412/222755.813:ERROR:crash_report_database_win.cc(428)] unexpected header
 [0412/224255.815:ERROR:crash_report_database_win.cc(428)] unexpected header
 [0412/225755.817:ERROR:crash_report_database_win.cc(428)] unexpected header
+[0630/195612.890:ERROR:http_transport_win.cc(363)] WinHttpReceiveResponse: The operation completed successfully. (0x0)

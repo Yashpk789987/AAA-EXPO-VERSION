@@ -14,11 +14,10 @@ import {
   StatusBar,
   TouchableOpacity,
   Modal,
-  Image,
+  AsyncStorage,
   RefreshControl
 } from 'react-native';
 import {
-  Badge,
   Container,
   Thumbnail,
   Header,
@@ -40,7 +39,7 @@ import {
 
 import { GlobalContext, ThemeContext } from '../../../GlobalContext';
 import { baseurl, endurl } from '../../../baseurl';
-import { PulseIndicator, DotIndicator } from 'react-native-indicators';
+import { DotIndicator } from 'react-native-indicators';
 
 export default class TestCategory extends React.Component {
   static navigationOptions = {
@@ -77,9 +76,10 @@ export default class TestCategory extends React.Component {
     }
   };
 
-  refresh_list = () => {
+  refresh_list = async () => {
     this.setState({ online_tests_loading: true });
-    fetch(`${baseurl}tests/fetch_offline_tests/${endurl}`)
+    let student_id = JSON.parse(await AsyncStorage.getItem('student'))._id;
+    fetch(`${baseurl}tests/fetch_offline_tests/${student_id}/${endurl}`)
       .then(res => res.json())
       .then(data => {
         this.setState({ online_tests: data, online_tests_loading: false });
@@ -90,8 +90,9 @@ export default class TestCategory extends React.Component {
       });
   };
 
-  componentDidMount() {
-    fetch(`${baseurl}tests/fetch_offline_tests/${endurl}`)
+  componentDidMount = async () => {
+    let student_id = JSON.parse(await AsyncStorage.getItem('student'))._id;
+    fetch(`${baseurl}tests/fetch_offline_tests/${student_id}/${endurl}`)
       .then(res => res.json())
       .then(data => {
         this.setState({ online_tests: data, online_tests_loading: false });
@@ -100,7 +101,7 @@ export default class TestCategory extends React.Component {
         console.log(err);
         alert('Technical Error. Please Try Again');
       });
-  }
+  };
 
   makeCategories = button_background_color => {
     return this.state.online_tests.map((test, index) => {
@@ -268,12 +269,25 @@ export default class TestCategory extends React.Component {
                   }}
                 >
                   <Text
-                    style={{ color: 'white', fontSize: 19, paddingLeft: '26%' }}
+                    style={{ color: 'white', fontSize: 19, paddingLeft: '20%' }}
                   >
                     Offline Tests
                   </Text>
                 </Body>
-                <Right />
+                <Right>
+                  <TouchableOpacity onPress={this.moveToPaymentGateWay}>
+                    <Text
+                      style={{
+                        color: 'white',
+                        fontSize: 19,
+                        paddingRight: '10%',
+                        fontStyle: 'italic'
+                      }}
+                    >
+                      Pay
+                    </Text>
+                  </TouchableOpacity>
+                </Right>
               </Header>
               <Content
                 style={{ padding: '3%' }}

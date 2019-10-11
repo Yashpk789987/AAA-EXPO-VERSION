@@ -7,7 +7,7 @@ import { Image , TouchableOpacity , AsyncStorage , NetInfo , Dimensions , Platfo
 import {  Card, Container, Spinner , CardItem, Thumbnail, Text, Left , Body , Button , Icon, Content  , List, ListItem,   Right} from 'native-base'
 import { baseurl , endurl } from '../../../baseurl'
 import { ThemeContext } from '../../../GlobalContext'
-import { FileSystem } from 'expo'
+import { FileSystem  } from 'expo'
 import Dialog from 'react-native-dialog'
 const { Permissions } = Expo;
 
@@ -98,7 +98,6 @@ export default class PdfComponent extends React.Component {
             
             download = FileSystem.createDownloadResumable(uri, fileUri, {}, (downloaded) => {
                 this.setState({ total_data_to_loaded : downloaded.totalBytesExpectedToWrite, data_loaded : downloaded.totalBytesWritten })
-                console.log(parseInt((this.state.data_loaded/this.state.total_data_to_loaded)) * 100)
             }, null)
             let response
             response = await download.downloadAsync();
@@ -217,7 +216,7 @@ export default class PdfComponent extends React.Component {
                 <Card>
                     <CardItem>
                         <Left>
-                            <Thumbnail source={{uri: 'https://scontent.fbho1-1.fna.fbcdn.net/v/t1.0-9/31939617_625223027816553_3358383972697505792_n.jpg?_nc_cat=106&_nc_ht=scontent.fbho1-1.fna&oh=b82993ec6f7c850bd8ef1b8b51b9289a&oe=5D247810'}} />
+                            <Thumbnail source={{uri: 'https://scontent.fixe1-1.fna.fbcdn.net/v/t1.0-9/61995587_883160465356140_9068389366044295168_n.jpg?_nc_cat=103&_nc_oc=AQlnhl1aviwODbhcBT24HXasV0h0u980w_kPMOfhPlhx_B2BlEc5FYIjFNIMSiWcq5FE_o4uIC95TFZ21jWrMO3b&_nc_ht=scontent.fixe1-1.fna&oh=3104b87611130280b3dd4a5a8e8595f3&oe=5DE18B66'}} />
                                 <Body>
                                     <Text>{this.state.object.english_name}</Text>
                                     <Text note>Pdf Worksheets</Text>

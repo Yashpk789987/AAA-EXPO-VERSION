@@ -1,7 +1,7 @@
 import React from 'react'
 import { View , StyleSheet , Platform , Dimensions , StatusBar , TouchableOpacity , ScrollView , Image, AsyncStorage} from 'react-native'
 
-import { Grid , Row , Col, Card , CardItem , Body , Left , Right ,Container, Header, Content, Text, Spinner , Icon , Button , Thumbnail } from 'native-base'
+import {  Row , Col , Body , Left , Right ,Container, Header, Text, Spinner , Icon , Button } from 'native-base'
 
 import { ThemeContext } from '../../../GlobalContext'
 import BottomToolBar from './BottomToolBar'
@@ -13,6 +13,8 @@ const Entities = require('html-entities').XmlEntities;
 const entities = new Entities();
 
 import * as Animatable from 'react-native-animatable'
+import English_Hindi_Switch from './English_Hindi_Switch';
+import Menu from './Menu';
 
 class TestResult extends React.Component {
     constructor(props){
@@ -179,7 +181,7 @@ class Timer extends React.Component{
 }
 
 
-class Question extends React.Component {
+class Question extends React.PureComponent {
     state = {
        color_object : {
         correct_dynamic_color : '',
@@ -191,6 +193,9 @@ class Question extends React.Component {
 
 
     componentDidMount() {}
+    
+    
+
     
     componentDidUpdate(){}
 
@@ -230,6 +235,8 @@ class Question extends React.Component {
         this.props.handleSwip(direction, state)
     }
 
+    
+
     render(){
         const test_question = this.props.test_question
         const config = {
@@ -237,6 +244,9 @@ class Question extends React.Component {
             directionalOffsetThreshold: 80
         };
         let text = this.props.language === 'english' ? test_question.english_text : test_question.hindi_text
+        if(text.replace(/\s/g, "") === ''){
+            text = test_question.english_text
+        }
         return(
             <ThemeContext.Consumer>
             {(theme) => { return(
@@ -248,7 +258,7 @@ class Question extends React.Component {
                     <ScrollView  style = {{ padding : '5%', backgroundColor : theme.background , borderColor : theme.outline_color , borderWidth : 1, borderRadius : 5 }}>
                         <View>
                             <Text style = {{ color : theme.text_color , fontSize : 20}}>
-                                Q {this.props.index + 1} . {entities.decode(test_question.english_text)}{`\n`}{`\n`}{entities.decode(test_question.hindi_text)} {`\n`}
+                                Q {this.props.index + 1} . {entities.decode(text)}{`\n`}
                             </Text>
                         </View>  
                         { test_question.pic === null ? <></> : 
@@ -275,6 +285,7 @@ class Question extends React.Component {
                                 <Option clicked = {this.state.clicked} index = {index} key = {test_option.option_id} 
                                 outline_color = {theme.outline_color} option = {test_option} 
                                 test_question = {test_question} color_object = {this.state.color_object} 
+                                language = {this.props.language}
                                 handleCorrect = {this.handleCorrect} handleInCorrect = {this.handleInCorrect}  />
                             )})}
                         </View>
@@ -299,14 +310,18 @@ class Option extends React.Component {
     }
 
     render(){
-        const { outline_color , option , test_question , index} = this.props;
+        const { outline_color , option , test_question , index , language} = this.props;
+        let text = language === 'english' ? option.option_english_text : option.option_hindi_text
+        if(text.replace(/\s/g, "") === ''){
+            text = option.option_english_text
+        }
         if(this.props.test_question.is_attempted !== true){
             return(
                 <Button large disabled = {this.props.clicked} bordered block style = {[{ borderColor : (index === parseInt(test_question.correct_option_index) - 1 ? (this.props.color_object.correct_dynamic_color === '' ? this.props.outline_color : this.props.color_object.correct_dynamic_color) : this.state.wrong_dynamic_color) ,
                     backgroundColor : (index === parseInt(test_question.correct_option_index) - 1 ? this.props.color_object.correct_dynamic_color_2 : this.state.wrong_dynamic_color_2 )}]} 
                     onPress = {() => {if(index === (parseInt(test_question.correct_option_index) - 1)) {this.props.handleCorrect(parseInt(this.props.index) + 1)} 
                 else{this.setState({ wrong_dynamic_color : 'red' , wrong_dynamic_color_2 : 'red'}); this.props.handleInCorrect(parseInt(this.props.index) + 1)}}} >
-                    <Text uppercase = {false} style = {{ color : outline_color }}> {index + 1 } . {entities.decode(option.option_english_text)} </Text>
+                    <Text uppercase = {false} style = {{ color : outline_color }}> {index + 1 } . {entities.decode(text)} </Text>
                 </Button>
             )
         }else {
@@ -323,13 +338,13 @@ class Option extends React.Component {
                     backgroundColor = 'red'
                 }
             } else {
-                   borderColor = 'white'
+                borderColor = 'white'
             }
              
             return(
                 <Button large disabled = {true} bordered block style = {[{ borderColor : borderColor ,
                      backgroundColor : backgroundColor }]}  >
-                    <Text uppercase = {false} style = {{ color : outline_color }}> {index + 1 } . {entities.decode(option.option_english_text)} </Text>
+                    <Text uppercase = {false} style = {{ color : outline_color }}> {index + 1 } . {entities.decode(text)} </Text>
                 </Button>
             )
         }
@@ -353,11 +368,29 @@ export default class TestSwiper extends React.Component {
             "time_allowed" : '',
             current_index : 1,
             "test_finished" : false,
-            present_selected_language : ''
+            present_selected_language : 'english',
+            open_menu : false,
+            visited_questions_array : []
         }
     }
 
-    
+    close_menu = () => {
+        this.setState({ open_menu : false })
+    }
+
+    Jump = async (i) => {
+        this.append_visited_questions_array(this.state.current_index);
+        this.child_question.current.clear_question();
+        await this.setState({ current_index : (i + 1) , open_menu : false })
+    }
+
+    open_menu = () => {
+        this.setState({ open_menu : true })
+    }
+
+    handleLanguageChange = (value) => {
+        this.setState({ present_selected_language : value})
+    }
 
     handleAttempt = (index,attempted_index) => {
         let test_question_array = JSON.parse(JSON.stringify(this.state.test_question_array))
@@ -365,9 +398,12 @@ export default class TestSwiper extends React.Component {
         this.setState({ test_question_array : test_question_array})
     }
 
+   
+
     moveForward =  () => {
         this.child_question.current.clear_question();
         if(!(this.state.current_index === this.state.test_question_array.length)){
+           this.append_visited_questions_array(this.state.current_index)
            this.setState(state => ({ current_index : state.current_index + 1}))
         }
     }
@@ -375,17 +411,28 @@ export default class TestSwiper extends React.Component {
     moveBackward = () => {
         this.child_question.current.clear_question();
         if(!(this.state.current_index === 1)){
+            this.append_visited_questions_array(this.state.current_index)
             this.setState(state => ({ current_index : state.current_index - 1}))
+        }
+    }
+
+    append_visited_questions_array = (index) => {
+        if(this.state.visited_questions_array.indexOf(index) === -1){
+            let temp = this.state.visited_questions_array;
+            temp.push(index);
+            this.setState({ visited_questions_array : temp })
         }
     }
 
     handleSwip = async (direction, state) => {
         if(direction === 'SWIPE_LEFT'){
             if(!(this.state.current_index === this.state.test_question_array.length)){
+                this.append_visited_questions_array(this.state.current_index)
                 this.setState(state => ({ current_index : state.current_index + 1}))
             }
         } else if(direction === 'SWIPE_RIGHT'){
             if(!(this.state.current_index === 1)){
+                this.append_visited_questions_array(this.state.current_index)
                 this.setState(state => ({ current_index : state.current_index - 1}))
             }
         }
@@ -396,22 +443,14 @@ export default class TestSwiper extends React.Component {
             return <></>
         } else {
             let height = parseInt(this.state.current_index) === parseInt(this.state.test_question_array.length ) ? '63%' : '72%'
-            return <Question ref = {this.child_question} language = {this.state.present_selected_language} height = {height} handleAttempt = {this.handleAttempt} handleSwip = {this.handleSwip} index = {current_index - 1} test_question = {this.state.test_question_array[current_index - 1]}  />
+            return <Question ref = {this.child_question} language = {this.state.present_selected_language} height = {height}  handleAttempt = {this.handleAttempt} handleSwip = {this.handleSwip} index = {current_index - 1} test_question = {this.state.test_question_array[current_index - 1]}  />
         }
     }
+    
+   
 
     componentDidMount = async () =>  {
-        let language = null
-        
         let test = this.props.navigation.getParam('test');
-        
-        try{
-        language = await AsyncStorage.getItem('language');
-        }catch(err){
-            console.log(err)
-        }
-        
-        this.setState({ present_selected_language : language });
         this.setState(({ time_allowed : test.test_allowed_time_in_seconds}))
         
         fetch(`${baseurl}tests/fetch_test_questions_by_test_id/${test._id}/${endurl}`)
@@ -515,18 +554,28 @@ export default class TestSwiper extends React.Component {
             {( theme ) => {return(
             <Container style = {{ backgroundColor : theme.background ,  flex:1, flexDirection: 'column' ,justifyContent: 'space-between'}}>
                 <Header style={[styles.androidHeader  , { backgroundColor: theme.header_background_color }]}>
-                    <Left>
+                    <Left >
                         <TouchableOpacity onPress = {() => this.props.navigation.goBack()}> 
-                        <Icon name='arrow-back' style = {{ color : 'white' , paddingLeft : "20%"}}  />
+                          <Icon name='arrow-back' style = {{ color : 'white' }}  />
                         </TouchableOpacity>
+                        
                     </Left>
-                    <Body style = {{ flex : 3, justifyContent : 'center' , alignItems : 'center'}} >
-                        <Text style = {{ color : 'white' , fontSize : 19 , paddingLeft : '26%'}}>Offline Test</Text>
+                    <Body style = {{ flex : 1, justifyContent : 'center' , alignItems : 'center'}} >
+                        {/* <Text style = {{ color : 'white' , fontSize : 20 }}>Offline Test</Text> */}
                     </Body>
-                    <Right>
-                          
+                    <Right >
+                        <English_Hindi_Switch style = {{ paddingRight : '30%'}} handleLanguageChange = {this.handleLanguageChange} />
+                        <TouchableOpacity onPress = {() => this.open_menu()}>
+                          <Icon  name = {'grid'} style = {{color : 'white' , paddingLeft : '30%' ,paddingBottom : '5%', paddingRight : '10%'}} />
+                        </TouchableOpacity>
                     </Right>
                 </Header> 
+
+                <Menu question_array = {this.state.test_question_array} close_menu = {this.close_menu}
+                      open_menu = {this.state.open_menu} current_index = {this.state.current_index} Jump =  {this.Jump}
+                      visited_questions_array = {this.state.visited_questions_array}
+                />
+
                 <View style = {{ backgroundColor : theme.background  , justifyContent : 'space-between'  , flexDirection : 'row' , paddingTop : '0%'    }}>
                     <Text style = {{ color : theme.text_color , justifyContent : 'flex-start'}}> Q.No {this.state.current_index} / {this.state.test_question_array.length} </Text>
                     <Timer ref={this.child} timeTaken = {this.timeTaken} theme = {theme} time_allowed = {parseInt(test.test_allowed_time_in_seconds)} />

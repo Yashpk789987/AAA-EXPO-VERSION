@@ -7,7 +7,10 @@ import {
   StatusBar,
   Image,
   TouchableOpacity,
-  ToastAndroid
+  ToastAndroid,
+  AsyncStorage,
+  Modal,
+  View
 } from 'react-native';
 
 import {
@@ -23,13 +26,16 @@ import {
   Button,
   Thumbnail,
   Content,
-  ListItem
+  ListItem,
+  Spinner
 } from 'native-base';
 import { ThemeContext } from '../../GlobalContext';
-import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
+import Menu, { MenuItem } from 'react-native-material-menu';
 
 import Swiper from 'react-native-swiper';
 import SocialShare from '../SocialShare';
+import Enquiry from '../Enquiry';
+import { baseurl, endurl } from '../../baseurl';
 
 class MainComponent extends React.Component {
   _menu = null;
@@ -57,7 +63,9 @@ class MainComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      share_dialog_visible: false
+      share_dialog_visible: false,
+      do_enquiry: false,
+      updating_async_storage: false
     };
   }
 
@@ -65,7 +73,27 @@ class MainComponent extends React.Component {
     this.setState({ share_dialog_visible: true });
   };
 
-  componentDidMount() {}
+  componentDidMount = async () => {
+    this.setState({ updating_async_storage: true });
+    let { _id } = JSON.parse(await AsyncStorage.getItem('student'));
+    fetch(`${baseurl}students/show_by_id/${_id}/${endurl}`)
+      .then(res => res.json())
+      .then(async data => {
+        try {
+          await AsyncStorage.removeItem('student');
+          AsyncStorage.setItem('student', JSON.stringify(data));
+          this.setState({ updating_async_storage: false });
+        } catch (err) {
+          console.log(err);
+        }
+      })
+      .catch(err => console.log(err));
+    let enquiry_data = await AsyncStorage.getItem('ENQUIRY');
+    if (enquiry_data === null) {
+      this.setState({ do_enquiry: true });
+    }
+  };
+
   render() {
     return (
       <ThemeContext.Consumer>
@@ -144,6 +172,7 @@ class MainComponent extends React.Component {
                   </Menu>
                 </Right>
               </Header>
+              <Enquiry do_enquiry={this.state.do_enquiry} />
               <Content style={{ padding: '4%' }}>
                 <Container
                   style={{
@@ -152,40 +181,6 @@ class MainComponent extends React.Component {
                   }}
                 >
                   <Swiper autoplay={true} activeDotColor='white'>
-                    <Container
-                      style={{
-                        margin: '2%',
-                        flex: 1,
-                        justifyContent: 'center',
-                        alignItems: 'center'
-                      }}
-                    >
-                      <Image
-                        style={{
-                          flex: 1,
-                          resizeMode: 'contain',
-                          aspectRatio: 1.5
-                        }}
-                        source={require('../../assets/NADD6.jpg')}
-                      />
-                    </Container>
-                    <Container
-                      style={{
-                        margin: '2%',
-                        flex: 1,
-                        justifyContent: 'center',
-                        alignItems: 'center'
-                      }}
-                    >
-                      <Image
-                        style={{
-                          flex: 1,
-                          resizeMode: 'contain',
-                          aspectRatio: 1.5
-                        }}
-                        source={require('../../assets/NADD9.jpg')}
-                      />
-                    </Container>
                     <Container
                       style={{
                         margin: '2%',
@@ -313,7 +308,7 @@ class MainComponent extends React.Component {
                       <Thumbnail
                         source={{
                           uri:
-                            'https://scontent.fbho1-1.fna.fbcdn.net/v/t1.0-9/31939617_625223027816553_3358383972697505792_n.jpg?_nc_cat=106&_nc_ht=scontent.fbho1-1.fna&oh=b82993ec6f7c850bd8ef1b8b51b9289a&oe=5D247810'
+                            'https://scontent.fixe1-1.fna.fbcdn.net/v/t1.0-9/61995587_883160465356140_9068389366044295168_n.jpg?_nc_cat=103&_nc_oc=AQlnhl1aviwODbhcBT24HXasV0h0u980w_kPMOfhPlhx_B2BlEc5FYIjFNIMSiWcq5FE_o4uIC95TFZ21jWrMO3b&_nc_ht=scontent.fixe1-1.fna&oh=3104b87611130280b3dd4a5a8e8595f3&oe=5DE18B66'
                         }}
                       />
                       <Body>
@@ -437,6 +432,16 @@ class MainComponent extends React.Component {
                     </Container>
                   </Swiper>
                 </Container>
+                <Modal
+                  animationType='fade'
+                  transparent={true}
+                  visible={this.state.updating_async_storage}
+                  onRequestClose={() => alert('Closed')}
+                >
+                  <View style={{ paddingTop: '40%' }}>
+                    <Spinner color='white' />
+                  </View>
+                </Modal>
                 <Container
                   style={{
                     backgroundColor: theme.background,

@@ -1,7 +1,7 @@
 
 
 import React from 'react'
-import { ScrollView , Text , StyleSheet , Platform , StatusBar , TouchableOpacity , Image , NetInfo  } from 'react-native'
+import { ScrollView , Text , StyleSheet , Platform , StatusBar , TouchableOpacity , Image , NetInfo, AsyncStorage } from 'react-native'
 import {Container , Header , Left, Right, Body, Icon , Button , Card , CardItem , Spinner, Content , Grid , Col, Row} from 'native-base'
 import { GlobalContext , ThemeContext } from '../../../GlobalContext'
 import { createMaterialTopTabNavigator , createAppContainer , createStackNavigator } from 'react-navigation'
@@ -39,8 +39,9 @@ class AptitudeCategoryPicker extends React.Component {
     }
 
 
-    load = () => {
-        fetch(baseurl + `categories_and_sub_categories/sub_categories/1/${endurl}`)
+    load = async () => {
+        let student_id = JSON.parse(await AsyncStorage.getItem('student'))._id;
+        fetch(baseurl + `categories_and_sub_categories/fetch_sub_category_for_pdf/${student_id}/1/${endurl}`)
         .then((res) => res.json())
         .then((data) => { this.setState({ aptitude_categories_loading : false , categories : data})})
         .catch((err) => console.log(err))
@@ -76,7 +77,7 @@ class AptitudeCategoryPicker extends React.Component {
                         <Card style={{flex: 0 }}>
                             <CardItem>
                                 <Body style = {{ flex : 3, justifyContent : 'center', alignItems : 'center'}}>
-                                    <Text style = {{ fontSize : 15 }} adjustsFontSizeToFit = {true} numberOfLines = {1}>{categories[i].english_name}</Text>
+                                    <Text style = {{ fontSize : 15 }} adjustsFontSizeToFit = {true} numberOfLines = {2}>{categories[i].english_name}</Text>
                                 </Body>
                             </CardItem>
                             <CardItem cardBody>
@@ -91,7 +92,7 @@ class AptitudeCategoryPicker extends React.Component {
                         <Card style={{flex: 0 }}>
                             <CardItem>
                                 <Body style = {{ flex : 3, justifyContent : 'center', alignItems : 'center'}}>
-                                    <Text style = {{ fontSize : 15 }} adjustsFontSizeToFit = {true} numberOfLines = {1}>{categories[i+1].english_name}</Text>
+                                    <Text style = {{ fontSize : 15 }} adjustsFontSizeToFit = {true} numberOfLines = {2}>{categories[i+1].english_name}</Text>
                                 </Body>
                             </CardItem>
                             <CardItem cardBody>
@@ -177,8 +178,9 @@ class ReasoningCategoryPicker extends React.Component {
         });
     }
 
-    load = () => {
-        fetch(baseurl + `categories_and_sub_categories/sub_categories/2/${endurl}`)
+    load = async () => {
+        let student_id = JSON.parse(await AsyncStorage.getItem('student'))._id;
+        fetch(baseurl + `categories_and_sub_categories/fetch_sub_category_for_pdf/${student_id}/2/${endurl}`)
         .then((res) => res.json())
         .then((data) => { this.setState({ reasoning_categories_loading : false , categories : data})})
         .catch((err) => console.log(err))
@@ -215,7 +217,7 @@ class ReasoningCategoryPicker extends React.Component {
                         <Card style={{flex: 0 }}>
                             <CardItem>
                                 <Body style = {{ flex : 3, justifyContent : 'center', alignItems : 'center'}}>
-                                    <Text style = {{ fontSize : 15 }} adjustsFontSizeToFit = {true} numberOfLines = {1}>{categories[i].english_name}</Text>
+                                    <Text style = {{ fontSize : 15 }} adjustsFontSizeToFit = {true} numberOfLines = {2}>{categories[i].english_name}</Text>
                                 </Body>
                             </CardItem>
                             <CardItem cardBody>
@@ -230,7 +232,7 @@ class ReasoningCategoryPicker extends React.Component {
                         <Card style={{flex: 0 }}>
                             <CardItem>
                                 <Body style = {{ flex : 3, justifyContent : 'center', alignItems : 'center'}}>
-                                    <Text style = {{ fontSize : 15 }} adjustsFontSizeToFit = {true} numberOfLines = {1}>{categories[i+1].english_name}</Text>
+                                    <Text style = {{ fontSize : 15 }} adjustsFontSizeToFit = {true} numberOfLines = {2}>{categories[i+1].english_name}</Text>
                                 </Body>
                             </CardItem>
                             <CardItem cardBody>

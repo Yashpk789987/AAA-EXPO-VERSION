@@ -4,7 +4,7 @@ import { FlatList, View , StyleSheet ,Dimensions, Platform , StatusBar , Touchab
 import { ListItem , Badge, Row , Card , CardItem , Body , Left , Right ,Container, Header, Content, Text, Spinner , Icon , Button , Grid , Col , Input,Item } from 'native-base'
 import { ThemeContext } from '../../../GlobalContext.js'
 import { baseurl , endurl , file_base_url } from '../../../baseurl'
-import Dialog, { DialogFooter, DialogButton, DialogContent , DialogTitle , SlideAnimation,} from 'react-native-popup-dialog';
+import Dialog, { DialogFooter, DialogButton, DialogContent , DialogTitle , SlideAnimation} from 'react-native-popup-dialog';
 import BottomToolBar from './BottomToolBar'
 import GestureRecognizer  from 'react-native-swipe-gestures';
 var q = {} ;
@@ -175,6 +175,7 @@ export default class PracticeSheetComponent extends React.Component {
             modal_purpose : ''
         }
     }
+    
     static navigationOptions = {
         header : null
     }
