@@ -77,7 +77,6 @@ export default class ShowAllPayments extends React.Component {
   componentDidMount = async () => {
     this.setState({ loading: true });
     let { _id } = JSON.parse(await AsyncStorage.getItem('student'));
-    console.log(`${baseurl}payment/showAllPayments/${_id}/${endurl}`);
     fetch(`${baseurl}payment/showAllPayments/${_id}/${endurl}`)
       .then(res => res.json())
       .then(data => {

@@ -92,13 +92,13 @@ export default class PaymentMainPage extends React.Component {
     fetch(`https://www.instamojo.com/api/1.1/payment-requests/${trans_id}`, {
       headers: {
         'Content-Type': 'application/json',
-        'X-Api-Key': '~',
-        'X-Auth-Token': '~'
+        'X-Api-Key': '18d2c2a55141fca1b31bcfb9ac9e1674',
+        'X-Auth-Token': '021f6c6ac9a65387e6ca1ea5b7f2c637'
       }
     })
       .then(res => res.json())
       .then(data => {
-        console.log('Hii', data.payment_request.payments[0].status);
+        
         if (data.payment_request.payments[0].status == 'Failed') {
           ToastAndroid.show(
             'Transaction Failed...\n PLease Try Again ',
